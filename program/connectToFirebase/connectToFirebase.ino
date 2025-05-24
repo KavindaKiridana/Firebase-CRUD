@@ -2,7 +2,6 @@
 #include <ESP8266WiFi.h>
 #include <Firebase_ESP_Client.h>
 
-int no=1;
 
 // Firebase helpers for handling authentication tokens and real-time database (RTDB) operations
 #include "addons/TokenHelper.h"
@@ -14,8 +13,6 @@ int no=1;
 FirebaseData fbdo;   // Firebase data object for sending/receiving data
 FirebaseConfig config; // Firebase configuration object
 FirebaseAuth auth;    // Firebase authentication object
-
-bool signupOK = false;
 
 void setup()
 {
@@ -30,41 +27,31 @@ void setup()
   }
   Serial.println("\nWi-Fi connected!");
 
-  // Firebase setup
   config.api_key = API_KEY;
   config.database_url = DATABASE_URL;
-  config.token_status_callback = tokenStatusCallback;
+  auth.user.email = USER_EMAIL;
+  auth.user.password = USER_PASSWORD;
 
-// Firebase authentication (Anonymous Signup)
-  if (Firebase.signUp(&config, &auth, "", ""))// Attempt Firebase anonymous sign-up
-  {
-    Serial.println("Firebase connected!");
-    signupOK = true;
-  }
-  else
-  {
-    // Print signup error message if failed
-    Serial.printf("Firebase signup failed: %s\n", config.signer.signupError.message.c_str());
-  }
-  // Initialize Firebase with configuration and authentication
   Firebase.begin(&config, &auth);
+  Firebase.reconnectWiFi(true);
+
+  // Option 1: Check if Firebase is ready (best way)
+  if (Firebase.ready()) {
+    Serial.println("Firebase connected successfully!");
+  } else {
+    Serial.println("Firebase connection failed!");
+  }
+
+//i commented this line bcz firebase esp client library have no function 'authError()' and it couse to an error
+  // Option 2: If using Email/Password Auth, check signup status
+  // if (Firebase.authError().code == 0) { // No error = success
+  //   Serial.println("Firebase auth successful!");
+  // } else {
+  //   Serial.println("Firebase auth failed: " + Firebase.authError().message);
+  // }
 }
 
 void loop()
 {
-  char path[50];
-  sprintf(path, "/values/%d", no); // Creates path like "/values/1"
-
-  // Send integer data to Firebase Realtime Database (RTDB)
-  if (Firebase.RTDB.setInt(&fbdo, path, no))// Write the value of variable 'no'
-  {
-    Serial.println("Data Sent!"); // Print success message
-  }
-  else
-  {
-    // Print error message if data writing fails
-    Serial.println("Failed: " + fbdo.errorReason());
-  }
-  no++;
-  delay(1000); // Send data every  seconds
+  
 }
