@@ -13,6 +13,8 @@ FirebaseData fbdo;
 FirebaseConfig config;
 FirebaseAuth auth;
 
+  
+
 bool signupOK = false;
 
 void setup()
@@ -62,7 +64,6 @@ void loop()
     {
       Serial.println("Failed to read: " + fbdo.errorReason());
     }
-  }
-  
+  }  
   delay(2000); // Read every 2 seconds
 }
