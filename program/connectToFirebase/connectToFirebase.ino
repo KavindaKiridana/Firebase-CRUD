@@ -41,14 +41,6 @@ void setup()
   } else {
     Serial.println("Firebase connection failed!");
   }
-
-//i commented this line bcz firebase esp client library have no function 'authError()' and it couse to an error
-  // Option 2: If using Email/Password Auth, check signup status
-  // if (Firebase.authError().code == 0) { // No error = success
-  //   Serial.println("Firebase auth successful!");
-  // } else {
-  //   Serial.println("Firebase auth failed: " + Firebase.authError().message);
-  // }
 }
 
 void loop()
